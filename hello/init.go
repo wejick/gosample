@@ -2,21 +2,27 @@ package hello
 
 import (
 	"expvar"
-	"github.com/nsqio/go-nsq"
-	logging "gopkg.in/tokopedia/logging.v1"
 	"log"
 	"net/http"
 	"os"
+
+	"github.com/nsqio/go-nsq"
+	logging "gopkg.in/tokopedia/logging.v1"
 )
 
+//ServerConfig hold server configuration
 type ServerConfig struct {
+	//Containts name information from [server] tag
 	Name string
 }
 
+//Config main configuration container
 type Config struct {
+	//will hold information from [Server] tag inside config file
 	Server ServerConfig
 }
 
+//HelloWorldModule main building blocks of this package
 type HelloWorldModule struct {
 	cfg       *Config
 	q         *nsq.Consumer
@@ -24,6 +30,11 @@ type HelloWorldModule struct {
 	stats     *expvar.Int
 }
 
+//NewHelloWorldModule creates object of HelloWorldModule struct,
+//it is not only creating the object but also :
+//	* Reading configuration using logging package
+//	* Creating new nsq consumer using CreateNewConsumer function
+//	* Initiating stats as rspStats
 func NewHelloWorldModule() *HelloWorldModule {
 
 	var cfg Config
@@ -37,9 +48,9 @@ func NewHelloWorldModule() *HelloWorldModule {
 	// this message only shows up if app is run with -debug option, so its great for debugging
 	logging.Debug.Println("hello init called", cfg.Server.Name)
 
-	// contohnya: caranya ciptakan nsq consumer
+	// example of creating nsq consumer
 	nsqCfg := nsq.NewConfig()
-	q := createNewConsumer(nsqCfg, "random-topic", "test", handler)
+	q := CreateNewConsumer(nsqCfg, "random-topic", "test", handler)
 	q.SetLogger(log.New(os.Stderr, "nsq:", log.Ltime), nsq.LogLevelError)
 	q.ConnectToNSQLookupd("nsqlookupd.local:4161")
 
@@ -52,6 +63,10 @@ func NewHelloWorldModule() *HelloWorldModule {
 
 }
 
+//SayHelloWorld is example of http handler, it accepts w http.ResponseWriter, r *http.Request as parameters
+//In this function we increament the stats expvar counter
+//
+//How to use it
 func (hlm *HelloWorldModule) SayHelloWorld(w http.ResponseWriter, r *http.Request) {
 	hlm.stats.Add(1)
 	w.Write([]byte("Hello " + hlm.something))
@@ -63,7 +78,12 @@ func handler(msg *nsq.Message) error {
 	return nil
 }
 
-func createNewConsumer(nsqCfg *nsq.Config, topic string, channel string, handler nsq.HandlerFunc) *nsq.Consumer {
+//CreateNewConsumer creates new nsq cunsomer
+//How to use this function is quite easy, we just need to provide it with
+//nsqconfig, topic, channel name and function handler.
+//
+//Look at this example :
+func CreateNewConsumer(nsqCfg *nsq.Config, topic string, channel string, handler nsq.HandlerFunc) *nsq.Consumer {
 	q, err := nsq.NewConsumer(topic, channel, nsqCfg)
 	if err != nil {
 		log.Fatal("failed to create consumer for ", topic, channel, err)
