@@ -3,7 +3,7 @@
 /*
 Package hello can be used as reference when creating new module.
 
-This package containts implementation of http handler, consumer and logging usage.
+This package contains implementation of http handler, consumer and logging usage.
 The main part of HelloWorldModule struct which is initiated by NewHelloWorldModule() method.
 Usage :
 	hwm := hello.NewHelloWorldModule()

@@ -12,7 +12,7 @@ import (
 
 //ServerConfig hold server configuration
 type ServerConfig struct {
-	//Containts name information from [server] tag
+	//Contains name information from [server] tag
 	Name string
 }
 
