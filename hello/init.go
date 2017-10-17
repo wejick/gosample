@@ -26,7 +26,7 @@ func NewHelloWorldModule() *HelloWorldModule {
 
 	var cfg Config
 
-	ok := logging.ReadModuleConfig(&cfg, "config", "hello") || logging.ReadModuleConfig(&cfg, "files/etc/gosample", "hello")
+	ok := logging.ReadModuleConfig(&cfg, "config", "hello") || logging.ReadModuleConfig(&cfg, "files/etc/gosample", "hello") || logging.ReadModuleConfig(&cfg, "/etc/gosample", "hello")
 	if !ok {
 		// when the app is run with -e switch, this message will automatically be redirected to the log file specified
 		log.Fatalln("failed to read config")
